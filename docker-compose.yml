@@ -1,0 +1,65 @@
+version: "3.9"
+
+# Phase 1: MySQL only.
+# Phase 2: uncomment the kafka + zookeeper blocks.
+#
+# Memory budget on 8GB RAM:
+#   MySQL:       ~400 MB
+#   Your app:    ~512 MB (set -Xmx512m in IDE run config)
+#   IDE + OS:    ~4 GB
+#   Remaining:   ~3 GB headroom
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: logmind-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_secret
+      MYSQL_DATABASE: logmind
+      MYSQL_USER: logmind
+      MYSQL_PASSWORD: logmind_secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=256M
+      --max-connections=100
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "logmind", "-plogmind_secret"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Phase 2: uncomment below ──────────────────────────────
+
+  # zookeeper:
+  #   image: confluentinc/cp-zookeeper:7.6.0
+  #   container_name: logmind-zookeeper
+  #   environment:
+  #     ZOOKEEPER_CLIENT_PORT: 2181
+  #     ZOOKEEPER_TICK_TIME: 2000
+  #     ZOOKEEPER_HEAP_OPTS: "-Xmx128m -Xms128m"
+  #   ports:
+  #     - "2181:2181"
+
+  # kafka:
+  #   image: confluentinc/cp-kafka:7.6.0
+  #   container_name: logmind-kafka
+  #   depends_on:
+  #     - zookeeper
+  #   environment:
+  #     KAFKA_BROKER_ID: 1
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #     KAFKA_HEAP_OPTS: "-Xmx256m -Xms256m"
+  #   ports:
+  #     - "9092:9092"
+
+volumes:
+  mysql_data:
