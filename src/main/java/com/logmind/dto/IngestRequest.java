@@ -1,4 +1,4 @@
-package main.java.com.logmind.dto;
+package com.logmind.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.logmind.entity.LogLevel;

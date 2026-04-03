@@ -1,4 +1,4 @@
-package test.java.com.logmind;
+package com.logmind;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logmind.dto.IngestRequest;

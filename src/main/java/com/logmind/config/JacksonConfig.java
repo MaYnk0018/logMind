@@ -1,4 +1,4 @@
-package main.java.com.logmind.config;
+package com.logmind.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

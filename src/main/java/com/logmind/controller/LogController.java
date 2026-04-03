@@ -1,4 +1,4 @@
-package main.java.com.logmind.controller;
+package com.logmind.controller;
 
 import com.logmind.dto.IngestRequest;
 import com.logmind.dto.IngestResponse;
@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@RestController 
+// equals@Controller
+//@ResponseBody
+//helps handle http request and return (json, xml)
 @RequestMapping("/api/logs")
 @RequiredArgsConstructor
 public class LogController {
@@ -62,7 +65,7 @@ public class LogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size
     ) {
-        size = Math.min(size, 200);  // cap page size
+        size = Math.min(size, 200);
         return queryService.getLogs(serviceId, level, page, size);
     }
 

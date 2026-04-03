@@ -1,4 +1,4 @@
-package main.java.com.logmind.service;
+package com.logmind.service;
 
 import com.logmind.dto.IngestRequest;
 import com.logmind.dto.IngestResponse;
@@ -30,8 +30,9 @@ import java.util.Map;
  * Keeping this all in one method now makes the Phase 2 refactor a clear,
  * explainable extraction — good interview story.
  */
+//Lambok
 @Slf4j
-@Service
+@Service 
 @RequiredArgsConstructor
 public class LogIngestionService {
 

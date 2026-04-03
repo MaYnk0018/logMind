@@ -1,4 +1,4 @@
-package main.java.com.logmind.service;
+package com.logmind.service;
 
 import com.logmind.entity.AnomalyEntity.Severity;
 import com.logmind.entity.LogLevel;

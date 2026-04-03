@@ -1,4 +1,4 @@
-package main.java.com.logmind.entity;
+package com.logmind.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

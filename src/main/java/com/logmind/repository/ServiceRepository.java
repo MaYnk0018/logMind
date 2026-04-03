@@ -1,4 +1,4 @@
-package main.java.com.logmind.repository;
+package com.logmind.repository;
 
 import com.logmind.entity.ServiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

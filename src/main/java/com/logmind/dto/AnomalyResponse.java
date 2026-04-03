@@ -1,4 +1,4 @@
-package main.java.com.logmind.dto;
+package com.logmind.dto;
 
 import com.logmind.entity.AnomalyEntity;
 import lombok.Builder;

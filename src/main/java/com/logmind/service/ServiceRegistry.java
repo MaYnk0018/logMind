@@ -1,4 +1,4 @@
-package main.java.com.logmind.service;
+package com.logmind.service;
 
 import com.logmind.entity.ServiceEntity;
 import com.logmind.repository.ServiceRepository;

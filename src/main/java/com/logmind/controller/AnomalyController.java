@@ -1,4 +1,4 @@
-package main.java.com.logmind.controller;
+package com.logmind.controller;
 
 import com.logmind.dto.AnomalyResponse;
 import com.logmind.dto.PagedResponse;

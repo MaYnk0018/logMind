@@ -1,4 +1,4 @@
-package test.java.com.logmind;
+package com.logmind;
 
 import com.logmind.entity.LogLevel;
 import com.logmind.service.WindowState;
