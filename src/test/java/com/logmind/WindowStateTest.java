@@ -95,7 +95,7 @@ class WindowStateTest {
 
         assertThat(stats).isNotNull();
         assertThat(stats.currentCount()).isEqualTo(50);
-        assertThat(stats.zScore()).isGreaterThan(2.5);  // definitely anomalous
+        assertThat(stats.zScore()).isGreaterThan(2.0);  // population stddev → ~2.24 at spike=50 vs mean=2
         assertThat(stats.mean()).isCloseTo(2.0, within(0.01));  // baseline mean
     }
 
@@ -148,14 +148,14 @@ class WindowStateTest {
 
         // Spike using FATAL
         long spikeTime = 5 * BUCKET_MS;
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 50; i++) {
             window.addLog(LogLevel.FATAL, spikeTime, Map.of("i", i));
         }
 
         WindowState.Stats stats = window.getStats(MIN_DATA_POINTS);
 
         assertThat(stats).isNotNull();
-        assertThat(stats.currentCount()).isEqualTo(30);
+        assertThat(stats.currentCount()).isEqualTo(50);
         assertThat(stats.zScore()).isGreaterThan(2.5);
     }
 

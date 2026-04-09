@@ -1,0 +1,91 @@
+
+
+
+@baseUrl = http://localhost:8080
+
+###############################################################################
+# POST /api/logs — single ingest (body required)
+###############################################################################
+
+POST {{baseUrl}}/api/logs
+Content-Type: application/json
+
+{
+  "service": "payment-service",
+  "level": "ERROR",
+  "message": "DB connection timeout after 30s",
+  "metadata": {
+    "host": "db-01",
+    "region": "us-east-1"
+  },
+  "timestamp": "2026-04-03T12:00:00.000Z"
+}
+
+###############################################################################
+# POST /api/logs — minimal valid body (no metadata, no timestamp)
+###############################################################################
+
+POST {{baseUrl}}/api/logs
+Content-Type: application/json
+
+{
+  "service": "auth-service",
+  "level": "INFO",
+  "message": "User login succeeded"
+}
+
+###############################################################################
+# POST /api/logs/batch — array body; all entries must use the same service name
+# Valid levels: DEBUG, INFO, WARN, ERROR, FATAL
+###############################################################################
+
+POST {{baseUrl}}/api/logs/batch
+Content-Type: application/json
+
+[
+  {
+    "service": "order-service",
+    "level": "WARN",
+    "message": "Slow query detected"
+  },
+  {
+    "service": "order-service",
+    "level": "ERROR",
+    "message": "Checkout failed: inventory lock",
+    "metadata": { "orderId": "ord-123" }
+  }
+]
+
+###############################################################################
+# GET /api/logs — no body; optional query: serviceId, level, page, size (max 200)
+###############################################################################
+
+GET {{baseUrl}}/api/logs
+
+###
+
+GET {{baseUrl}}/api/logs?serviceId=PASTE_SERVICE_UUID_FROM_INGEST_RESPONSE&level=ERROR&page=0&size=50
+
+###
+
+GET {{baseUrl}}/api/logs?page=0&size=10
+
+###############################################################################
+# GET /api/logs/timeseries — no body; serviceId required; window minutes (max 1440)
+###############################################################################
+
+GET {{baseUrl}}/api/logs/timeseries?serviceId=PASTE_SERVICE_UUID_FROM_INGEST_RESPONSE&window=60
+
+###
+
+GET {{baseUrl}}/api/logs/timeseries?serviceId=PASTE_SERVICE_UUID_FROM_INGEST_RESPONSE
+
+###############################################################################
+# GET /api/anomalies — no body; optional serviceId, page, size (max 100)
+###############################################################################
+
+GET {{baseUrl}}/api/anomalies
+
+###
+
+GET {{baseUrl}}/api/anomalies?serviceId=PASTE_SERVICE_UUID_FROM_INGEST_RESPONSE&page=0&size=20

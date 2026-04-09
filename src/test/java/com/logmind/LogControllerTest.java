@@ -9,19 +9,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
-import static org.hamcrest.Matchers.*;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")  // uses application-test.yml → H2 in-memory DB
+@ActiveProfiles("test")
+@EmbeddedKafka(partitions = 1, topics = {"raw-logs", "stored-logs", "raw-logs-dlq"})
 class LogControllerTest {
 
     @Autowired
@@ -50,7 +54,6 @@ class LogControllerTest {
     @Test
     @DisplayName("POST /api/logs — missing required fields returns 400 with error details")
     void ingestSingle_missingFields_returns400() throws Exception {
-        // Empty body — missing service, level, message
         mockMvc.perform(post("/api/logs")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
@@ -65,7 +68,7 @@ class LogControllerTest {
     @DisplayName("POST /api/logs — invalid service name characters returns 400")
     void ingestSingle_invalidServiceName_returns400() throws Exception {
         IngestRequest request = new IngestRequest();
-        request.setService("my service!!");  // spaces and ! not allowed
+        request.setService("my service!!");
         request.setLevel(LogLevel.INFO);
         request.setMessage("Test");
 
@@ -118,7 +121,6 @@ class LogControllerTest {
     @Test
     @DisplayName("GET /api/logs — returns paginated logs after ingest")
     void getLogs_returnsPaginatedResults() throws Exception {
-        // First ingest something to query
         IngestRequest request = new IngestRequest();
         request.setService("query-test-service");
         request.setLevel(LogLevel.INFO);
@@ -128,13 +130,13 @@ class LogControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 
-        // Now query it
-        mockMvc.perform(get("/api/logs").param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.page").value(0))
-                .andExpect(jsonPath("$.size").value(10))
-                .andExpect(jsonPath("$.totalElements").isNumber());
+        await().atMost(15, TimeUnit.SECONDS).pollInterval(200, TimeUnit.MILLISECONDS).untilAsserted(() ->
+                mockMvc.perform(get("/api/logs").param("size", "10"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.content").isArray())
+                        .andExpect(jsonPath("$.page").value(0))
+                        .andExpect(jsonPath("$.size").value(10))
+                        .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1))));
     }
 
     @Test

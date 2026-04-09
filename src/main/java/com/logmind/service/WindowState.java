@@ -110,6 +110,8 @@ public class WindowState {
         return serviceId;
     }
 
+
+    
     /**
      * Immutable value object returned by getStats().
      * All fields are public final — no getters needed for an internal record.
