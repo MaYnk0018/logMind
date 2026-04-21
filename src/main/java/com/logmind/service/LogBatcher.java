@@ -27,6 +27,7 @@ public class LogBatcher {
 
     private final List<RawLogMessage> buffer = new ArrayList<>();
 
+    //why not ReentrantLock
     public synchronized void addAll(List<RawLogMessage> messages) {
         buffer.addAll(messages);
         if (buffer.size() >= maxSize) {
@@ -49,6 +50,7 @@ public class LogBatcher {
         buffer.clear();
         try {
             List<LogEntity> entities = batch.stream().map(this::toEntity).toList();
+            // List<LogEntity> entities = batch.stream().
             List<LogEntity> saved = logRepository.saveAll(entities);
             log.debug("Flushed {} logs to DB", saved.size());
             for (int i = 0; i < saved.size(); i++) {

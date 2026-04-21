@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 public class LogPublisher {
+    //we need value serializer for RawLogMessage?? why and how??
+    //spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
     private final KafkaTemplate<String, RawLogMessage> kafkaTemplate;
 
     public void publish(IngestRequest request, String serviceId){
@@ -39,6 +41,7 @@ public class LogPublisher {
                 publishToDlq(msg);
             }
         });
+       
         //need of flush() here??
     }
 

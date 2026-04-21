@@ -11,9 +11,7 @@ public class KafkaTopicConfig {
     @Bean
     public NewTopic rawLogsTopic() {
         return TopicBuilder.name("raw-logs")
-                .partitions(6)
-                .replicas(1)
-                .build();
+                .partitions(6).replicas(1).build();
     }
 
     @Bean
