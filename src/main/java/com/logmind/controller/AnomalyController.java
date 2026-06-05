@@ -6,7 +6,7 @@ import com.logmind.service.LogQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@RestController 
 @RequestMapping("/api/anomalies")
 @RequiredArgsConstructor
 public class AnomalyController {

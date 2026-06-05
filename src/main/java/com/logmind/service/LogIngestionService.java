@@ -12,8 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Phase 2: HTTP validates → resolve service → publish to {@code raw-logs} → return.
- * Storage and anomaly detection run asynchronously ({@link com.logmind.kafka.consumer.RawLogConsumer},
- * {@link com.logmind.kafka.consumer.StoredLogConsumer}).
+ * Storage runs asynchronously here; anomaly detection consumes {@code stored-logs}
+ * in the anomaly-detection-service.
  */
 @Slf4j
 @Service
@@ -49,6 +49,7 @@ public class LogIngestionService {
         logPublisher.publishBatch(requests, serviceId);
         log.debug("Published {} logs to raw-logs for service={}", requests.size(), serviceName);
 
+        
         return IngestResponse.of(requests.size(), serviceId);
     }
 }

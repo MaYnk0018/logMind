@@ -16,11 +16,10 @@ import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import com.logmind.dto.RawLogMessage;
-import com.logmind.dto.StoredLogMessage;
 
 /**
- * Phase 2: separate consumer factories for {@link RawLogMessage} vs {@link StoredLogMessage}
- * (JSON deserialization targets different DTO types).
+ * Phase 3: this app only consumes raw logs for storage.
+ * The anomaly-detection-service owns the stored-logs consumer group.
  */
 @Configuration
 @EnableKafka
@@ -43,26 +42,6 @@ public class KafkaInfraConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(rawLogConsumerFactory);
         factory.setBatchListener(true);
-        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, StoredLogMessage> storedLogConsumerFactory(
-            @Value("${spring.kafka.bootstrap-servers}") String bootstrap) {
-        Map<String, Object> props = consumerBaseProps(bootstrap, "anomaly-group");
-        JsonDeserializer<StoredLogMessage> deser = new JsonDeserializer<>(StoredLogMessage.class);
-        deser.addTrustedPackages("com.logmind.dto");
-        deser.setUseTypeHeaders(false);
-        return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deser);
-    }
-
-    @Bean(name = "storedLogKafkaListenerContainerFactory")
-    public ConcurrentKafkaListenerContainerFactory<String, StoredLogMessage> storedLogKafkaListenerContainerFactory(
-            ConsumerFactory<String, StoredLogMessage> storedLogConsumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, StoredLogMessage> factory =
-                new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(storedLogConsumerFactory);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }

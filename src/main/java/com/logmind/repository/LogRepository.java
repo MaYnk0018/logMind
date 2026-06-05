@@ -22,7 +22,7 @@ public interface LogRepository extends JpaRepository<LogEntity, Long> {
 
     Page<LogEntity> findAllByOrderByTimestampDesc(Pageable pageable);
 
-    // Used by SlidingWindowAnalyzer — count errors per minute bucket
+    // Recent errors for dashboard and later analysis flows
     @Query("""
         SELECT l FROM LogEntity l
         WHERE l.serviceId = :serviceId

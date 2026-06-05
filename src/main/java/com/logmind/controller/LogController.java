@@ -22,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogController {
 
+    //ingestionService provieds methods to handle log ingestion logic, such as validating and storing logs.
     private final LogIngestionService ingestionService;
     private final LogQueryService queryService;
 
