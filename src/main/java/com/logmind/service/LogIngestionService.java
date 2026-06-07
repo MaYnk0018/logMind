@@ -2,6 +2,7 @@ package com.logmind.service;
 
 import java.util.List;
 
+import org.aspectj.apache.bcel.classfile.Module.Require;
 import org.springframework.stereotype.Service;
 
 import com.logmind.dto.IngestRequest;
@@ -35,6 +36,8 @@ public class LogIngestionService {
     /**
      * Ingest a batch of log entries (up to 1000). Publishes each log to Kafka; persistence is async.
      */
+    // Require One Service Per Batch-> this is current hindering factor for batch ingestion, we can relax this in future by grouping by service in LogBatcher
+
     public IngestResponse ingestBatch(List<IngestRequest> requests) {
         if (requests.isEmpty()) {
             throw new IllegalArgumentException("Batch must contain at least one log entry");

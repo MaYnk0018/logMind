@@ -23,6 +23,9 @@ public class LogEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name="log_id", nullable= false, unique= true, length=36)
+    private String logId;
+
     @Column(name = "service_id", nullable = false, length = 36)
     private String serviceId;
 
@@ -42,11 +45,12 @@ public class LogEntity {
     private LocalDateTime timestamp;
 
     public static LogEntity of(String serviceId, LogLevel level, String message,
-                               Map<String, Object> metadata, LocalDateTime timestamp) {
+                               String logId, Map<String, Object> metadata, LocalDateTime timestamp) {
         LogEntity log = new LogEntity();
         log.serviceId = serviceId;
         log.level = level;
         log.message = message;
+        log.logId = logId;
         log.metadata = metadata;
         log.timestamp = timestamp;
         return log;

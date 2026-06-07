@@ -68,6 +68,7 @@ public class LogBatcher {
                 msg.getServiceId(),
                 msg.getLevel(),
                 msg.getMessage(),
+                msg.getLogId(),
                 msg.getMetadata(),
                 msg.getTimestamp());
     }
